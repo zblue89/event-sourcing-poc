@@ -29,6 +29,7 @@ dependencies {
 	implementation("software.amazon.awssdk:apigatewaymanagementapi")
 	implementation("software.amazon.awssdk:dynamodb-enhanced")
 	implementation("com.github.oharaandrew314:dynamodb-kotlin-module:0.3.0")
+	implementation("com.amazonaws.serverless:aws-serverless-java-container-springboot3:2.0.0-M2")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
 }
@@ -42,4 +43,14 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.create<Zip>("buildZip") {
+	from(tasks.compileKotlin)
+	from(tasks.processResources)
+	into("lib") {
+		from(configurations.compileClasspath) {
+			exclude("tomcat-embed-*")
+		}
+	}
 }
